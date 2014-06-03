@@ -1,8 +1,13 @@
 package com.github.leonardocouto;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -69,9 +74,62 @@ public class InstallMojo extends AbstractMojo {
     		this.install(binaryArtifact);
     	}
     	
+    	List<String> packages = this.nodePackages(version);
+    	for (String pkg : this.npm) {
+    		if (!packages.contains(pkg)) {
+    			this.installPackage(pkg, version);
+    		}
+    	}
 	}
     
-    private void install(Artifact binaryArtifact) {
+    private void installPackage(String pkg, String nodeVersion) {
+    	
+    	Log logger = getLog();
+    	logger.error("************************ INSTALANDO " + pkg + "*********************************************");
+    	logger.error("*********************************************************************");
+    	
+    	String npmPath = this.npmPath(nodeVersion);
+    	String install = npmPath + " install -g " + pkg;
+    	Runtime run = Runtime.getRuntime();
+    	try {
+			Process process = run.exec(install);
+			InputStreamReader reader = new InputStreamReader(process.getErrorStream());
+			BufferedReader br = new BufferedReader(reader);
+			String line = br.readLine();
+			while (line != null) {
+				logger.error(line);
+				line = br.readLine();
+			}
+			br.close();
+			
+			reader = new InputStreamReader(process.getInputStream());
+			br = new BufferedReader(reader);
+			line = br.readLine();
+			while (line != null) {
+				logger.warn(line);
+				line = br.readLine();
+			}
+			br.close();
+			
+		} catch (IOException e) {
+			new MojoExecutionException("Problems installing node package " + pkg, e);		
+		}
+    	
+    }
+    
+    private List<String> nodePackages(String version) {
+    	String template = "%s/%s/lib/node_modules";
+		String path = String.format(template, this.target.getPath(), installationDirectoryName(version));
+		File nodeModules = new File(path);
+		
+		List<String> packages = new ArrayList<>();
+		for (File f : nodeModules.listFiles()) {
+			packages.add(f.getName());
+		}
+		return packages;
+    }
+
+	private void install(Artifact binaryArtifact) {
     	this.target.mkdirs();
     	
     	File file = binaryArtifact.getFile();
@@ -118,6 +176,19 @@ public class InstallMojo extends AbstractMojo {
     private Artifact binaryArtifact() {
     	String key = this.binaryGroup + ":" + this.binaryArtifact;
     	return this.plugin.getArtifactMap().get(key);
+    }
+    
+//    private String nodePath(String version) {
+//    	return this.baseExecutablePath(version) + "/node";
+//    }
+    
+    private String npmPath(String version) {
+    	return this.baseExecutablePath(version) + "/npm";
+    }
+    
+    private String baseExecutablePath(String version) {
+    	String template = "%s/%s/bin/";
+    	return String.format(template, this.target.getPath(), this.installationDirectoryName(version));
     }
     
     private String installationDirectoryName(String version) {
