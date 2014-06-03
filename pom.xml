@@ -14,10 +14,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <node.version>0.10.28</node.version>
-
-    <!-- Default OS and arch -->
-    <node.os>linux</node.os>
-    <node.arch>x86</node.arch>
   </properties>
 
   <dependencies>
@@ -30,7 +26,7 @@
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.2</version>
+      <version>3.3</version>
       <scope>provided</scope>
     </dependency>
 
@@ -84,7 +80,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.2</version>
+        <version>3.3</version>
         <configuration>
           <goalPrefix>nodejs-installer</goalPrefix>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
@@ -176,6 +172,19 @@
               </execution>
             </executions>
           </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <systemPropertyVariables>
+            <propertyName>binary-version</propertyName>
+            <buildDirectory>${node.version}</buildDirectory>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+
         </plugins>
 
       </build>

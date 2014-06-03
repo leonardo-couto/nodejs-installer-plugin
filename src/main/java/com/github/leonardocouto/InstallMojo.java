@@ -9,7 +9,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -30,10 +29,10 @@ public class InstallMojo extends AbstractMojo {
     @Parameter(property = "target", defaultValue = "${basedir}/gen")
     private File target;
 
-    @Parameter(defaultValue = "${node.os}")
+    @Parameter(property = "node-os", defaultValue = "linux")
     private String os;
 
-    @Parameter(defaultValue = "${node.arch}")
+    @Parameter(property = "node-arch")
     private String arch;
     
     @Parameter(property = "binary-group", defaultValue = "${project.groupId}")
@@ -42,12 +41,7 @@ public class InstallMojo extends AbstractMojo {
     @Parameter(property = "binary-artifact", defaultValue = "nodejs-binaries")
     private String binaryArtifact;
     
-    @Parameter(property = "binary-version", defaultValue = "${node.version}")
-    private String binaryVersion;
-    
-    // TODO: os, arch e binversion estao vindo nulos
-    
-    @Component
+    @Parameter(defaultValue = "${plugin}", readonly = true)
     private PluginDescriptor plugin;
     
     @Override
@@ -58,48 +52,50 @@ public class InstallMojo extends AbstractMojo {
 
     	logger.error("npm: " + ((npm == null) ? "null" : Arrays.toString(this.npm)));
     	logger.error("target: " + ((target == null) ? "null" : target.toString()));
-    	logger.error("os: " + targetOs());
+    	logger.error("os: " + this.os);
     	logger.error("arch: " + targetArch());
     	logger.error("binary-group: " + ((binaryGroup == null) ? "null" : binaryGroup));
     	logger.error("binary-artifact: " + ((binaryArtifact == null) ? "null" : binaryArtifact));
-    	logger.error("binaryVersion: " + ((binaryVersion == null) ? "null" : binaryVersion.toString()));
+    	
+    	Artifact binaryArtifact = this.binaryArtifact();
+    	String version = binaryArtifact.getVersion();
+    	
+    	logger.error("binaryVersion: " + version);
     	
     	logger.error("*********************************************************************");
     	logger.error("*********************************************************************");
     	
-    	if (!this.alreadyInstalled()) {
-    		this.install();
+    	if (!this.alreadyInstalled(version)) {
+    		this.install(binaryArtifact);
     	}
     	
 	}
     
-    private void install() {
+    private void install(Artifact binaryArtifact) {
     	this.target.mkdirs();
     	
-    	Artifact binaryArtifact = this.binaryArtifact();
     	File file = binaryArtifact.getFile();
-    	
     	TarGZipUnArchiver unarchiver = new TarGZipUnArchiver(file);
     	
     	unarchiver.enableLogging(new ConsoleLogger(Logger.LEVEL_ERROR, "console"));
     	unarchiver.setDestDirectory(this.target);
     	unarchiver.extract();
-    	this.renameExtracted();
+    	this.renameExtracted(binaryArtifact.getVersion());
     }
     
-    private void renameExtracted() {
+    private void renameExtracted(String version) {
     	String path = this.target.getPath();
     	
         for (File f : this.target.listFiles()) {
         	if (Files.isDirectory(f.toPath()) && (f.getName().startsWith("node-v"))) {
-				String newName = path + "/" +  this.installationDirectoryName();
+				String newName = path + "/" +  this.installationDirectoryName(version);
         		f.renameTo(new File(newName));
         		return;
             }
         }
     }
 
-    private boolean alreadyInstalled() throws MojoExecutionException {
+    private boolean alreadyInstalled(String version) throws MojoExecutionException {
     	if (!this.target.exists()) return false;
     	
     	if (this.target.isFile()) {
@@ -110,7 +106,7 @@ public class InstallMojo extends AbstractMojo {
     	for (File f : this.target.listFiles()) {
     		if (Files.isDirectory(f.toPath())) {
     			String name = f.getName();
-    			if (this.installationDirectoryName().equals(name)) {
+    			if (this.installationDirectoryName(version).equals(name)) {
     				return true;
     			}
     		}
@@ -124,8 +120,8 @@ public class InstallMojo extends AbstractMojo {
     	return this.plugin.getArtifactMap().get(key);
     }
     
-    private String installationDirectoryName() {
-    	return "node-v" + this.binaryVersion;
+    private String installationDirectoryName(String version) {
+    	return "node-v" + version;
     }
     
     private String targetArch() {
@@ -137,15 +133,5 @@ public class InstallMojo extends AbstractMojo {
     		return x64 ? "x64" : "x86";
     	}
     }
-    
-    private String targetOs() {
-    	if (this.os != null)  {
-    		return this.os.toLowerCase();
-    		
-    	} else {
-    		return "linux";    		
-    	}
-    }
-    
     
 }
