@@ -145,7 +145,6 @@ public class InstallMojo extends AbstractMojo {
 
     private Artifact binaryArtifact() {
         String key = this.binaryGroup + ":" + this.binaryArtifact;
-        getLog().error(key);
         return this.plugin.getArtifactMap().get(key);
     }
 
