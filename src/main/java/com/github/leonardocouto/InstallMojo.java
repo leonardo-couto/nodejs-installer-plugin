@@ -65,9 +65,37 @@ public class InstallMojo extends AbstractMojo {
                 this.installPackage(pkg, version);
             }
         }
+
+//        this.addToPath();
     }
 
-    private void installPackage(String pkg, String nodeVersion) throws MojoExecutionException {
+    // TODO: talvez criar um shell script que executa os comandos do node setando antes o PATH, criar um Mojo exec que
+    //       chama esse script e executa qualquer coisa
+    
+//    private void addToPath() throws MojoExecutionException {
+//        try {
+//        	String cmd = "export PATH=%s:%s";
+//	    	String path = System.getenv().get("PATH");
+//	    	String nodePath = this.target.getPath() + "/node/bin";
+//	    	
+//	    	File export = new File("export.node.sh");
+//	    	if (export.exists()) export.delete();
+//	    	
+//	    	PrintWriter writer = new PrintWriter(export);
+//	    	//writer.println("#!/bin/sh");
+//	    	writer.println(String.format(cmd, nodePath, path));
+//	    	writer.close();
+//	    	
+//	    	export.setExecutable(true);
+//	    	
+//	    	Runtime.getRuntime().exec("/bin/sh source " + export.getAbsolutePath());
+//	    	
+//        } catch (IOException e) {
+//            throw new MojoExecutionException("Error setting PATH", e);
+//        }
+//	}
+
+	private void installPackage(String pkg, String nodeVersion) throws MojoExecutionException {
 
         getLog().warn("installing npm package " + pkg + " ...");
         String npmPath = this.npmPath(nodeVersion);
