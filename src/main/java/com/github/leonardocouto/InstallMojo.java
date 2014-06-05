@@ -40,7 +40,7 @@ public class InstallMojo extends AbstractMojo {
     @Parameter(property = "target", defaultValue = "${basedir}/gen")
     private File target;
 
-    @Parameter(property = "binary-group", defaultValue = "${project.groupId}")
+    @Parameter(property = "binary-group", defaultValue = "com.github.leonardo-couto")
     private String binaryGroup;
 
     @Parameter(property = "binary-artifact", defaultValue = "nodejs-binaries")
@@ -80,7 +80,7 @@ public class InstallMojo extends AbstractMojo {
             this.logInputStream(process.getInputStream());
 
         } catch (IOException e) {
-            throw new MojoExecutionException("Problems installing node package " + pkg, e);
+            throw new MojoExecutionException("Error installing node package " + pkg, e);
         }
 
     }
@@ -103,19 +103,24 @@ public class InstallMojo extends AbstractMojo {
 
         File file = binaryArtifact.getFile();
         this.unarchive(file, this.target);
-        this.renameExtracted(binaryArtifact.getVersion());
+        File nodeDirectory = this.renameExtracted(binaryArtifact.getVersion());
+        this.createLink(nodeDirectory);
     }
 
-    private void renameExtracted(String version) {
+    private File renameExtracted(String version) throws MojoExecutionException {
         String path = this.target.getPath();
 
         for (File f : this.target.listFiles()) {
             if (Files.isDirectory(f.toPath()) && (f.getName().startsWith("node-v"))) {
-                String newName = path + "/" +  this.installationDirectoryName(version);
-                f.renameTo(new File(newName));
-                return;
+                File newName = new File(path, this.installationDirectoryName(version));
+                if (!f.renameTo(newName)) {
+                	throw new MojoExecutionException("Could not rename directory");
+                }
+                return newName;
             }
         }
+        
+        throw new MojoExecutionException("directory not found");
     }
 
     private boolean alreadyInstalled(String version) throws MojoExecutionException {
@@ -140,6 +145,7 @@ public class InstallMojo extends AbstractMojo {
 
     private Artifact binaryArtifact() {
         String key = this.binaryGroup + ":" + this.binaryArtifact;
+        getLog().error(key);
         return this.plugin.getArtifactMap().get(key);
     }
 
@@ -155,6 +161,24 @@ public class InstallMojo extends AbstractMojo {
     private String installationDirectoryName(String version) {
         return "node-v" + version;
     }
+    
+	private void createLink(File nodeDirectory) throws MojoExecutionException {
+		try {
+			File nodeLink = new File(this.target.getPath(), "node");
+	        this.deleteLink(nodeLink);
+			Files.createSymbolicLink(nodeLink.toPath(), nodeDirectory.toPath());
+		} catch (IOException e) {
+			throw new MojoExecutionException("Error creating symlink", e);
+		}
+	}
+
+	private void deleteLink(File nodeLink) throws MojoExecutionException {
+		if (nodeLink.exists()) {
+			if (!nodeLink.delete()) {
+				throw new MojoExecutionException("Could not delete " + nodeLink.getPath());
+			}
+		}
+	}
 
     private void logInputStream(InputStream input) throws IOException {
         Log logger = getLog();

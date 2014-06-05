@@ -1,3 +1,5 @@
-File node = new File( basedir, "gen/node-v0.10.28/bin/node" );
+File node = new File(basedir, "gen/node/bin/node");
+File npm = new File(basedir, "gen/node/bin/npm");
 
-assert touchFile.isFile()
+assert node.isFile()
+assert npm.exists()
