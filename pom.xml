@@ -7,8 +7,14 @@
   <version>0.10.28-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
-  <name>nodejs-installer-plugin Maven Plugin</name>
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>9</version>
+  </parent>
 
+  <name>nodejs-installer-plugin Maven Plugin</name>
+  <description>Maven plugin to install Node.js and npm</description>
   <url>http://github.com/leonardo-couto/nodejs-installer-plugin</url>
 
   <properties>
@@ -19,6 +25,28 @@
     <node.os>linux</node.os>
     <node.arch>x86</node.arch>
   </properties>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:ssh://git@github.com/leonardo-couto/nodejs-installer-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/leonardo-couto/nodejs-installer-plugin.git</developerConnection>
+    <url>https://github.com/leonardo-couto/nodejs-installer-plugin</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <developers>
+    <developer>
+      <name>Leonardo Couto</name>
+      <email>leonardo.couto@gmail.com</email>
+    </developer>
+  </developers>
 
   <dependencies>
     <dependency>
@@ -115,6 +143,22 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 
