@@ -83,7 +83,7 @@
     <dependency>
       <groupId>com.github.leonardo-couto</groupId>
       <artifactId>nodejs-binaries</artifactId>
-      <version>${node.version}</version>
+      <version>${node.version}.1</version>
       <classifier>${node.os}-${node.arch}</classifier>
       <type>tar.gz</type>
     </dependency>
@@ -181,19 +181,18 @@
         <node.arch>x64</node.arch>
       </properties>
     </profile>
-	
-	<profile>
-		<id>mac</id>
-		<activation>
-			<os>
-				<family>mac</family>
-			</os>
-		</activation>
-		<properties>
-			<node.os>macos</node.os>
-		</properties>
-	</profile>
-	
+    <profile>
+      <id>mac</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <node.os>macos</node.os>
+      </properties>
+    </profile>
+  
     <profile>
       <id>run-its</id>
       <build>
@@ -244,21 +243,23 @@
       <build>
         <plugins>
           <plugin>
-        	<groupId>org.apache.maven.plugins</groupId>
-        	<artifactId>maven-gpg-plugin</artifactId>
-        	<version>1.5</version>
-        	<executions>
-          		<execution>
-            		<id>sign-artifacts</id>
-            		<phase>verify</phase>
-            		<goals>
-              			<goal>sign</goal>
-            		</goals>
-          		</execution>
-        	</executions>
-      		</plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
       </build>
     </profile>
+    
   </profiles>
+  
 </project>

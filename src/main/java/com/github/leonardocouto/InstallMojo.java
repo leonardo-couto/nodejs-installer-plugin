@@ -11,6 +11,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -51,12 +53,12 @@ public class InstallMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-
+    	
         Artifact binaryArtifact = this.binaryArtifact();
-        String version = binaryArtifact.getVersion();
-
+        String version = this.nodeVersion(binaryArtifact.getVersion());
+        
         if (!this.alreadyInstalled(version)) {
-            this.install(binaryArtifact);
+            this.install(binaryArtifact, version);
         }
 
         List<String> packages = this.nodePackages(version);
@@ -98,13 +100,13 @@ public class InstallMojo extends AbstractMojo {
         return packages;
     }
 
-    private void install(Artifact binaryArtifact) throws MojoExecutionException {
+    private void install(Artifact binaryArtifact, String version) throws MojoExecutionException {
         getLog().warn("installing node.js on " + this.target.getPath() + " ...");
         this.target.mkdirs();
 
         File file = binaryArtifact.getFile();
         this.unarchive(file, this.target);
-        File nodeDirectory = this.renameExtracted(binaryArtifact.getVersion());
+        File nodeDirectory = this.renameExtracted(version);
         this.createLink(nodeDirectory);
     }
 
@@ -227,6 +229,12 @@ public class InstallMojo extends AbstractMojo {
             throw new MojoExecutionException("Error extracting node binary tar.gz", e);
         }
     }
-
-
+    
+	private String nodeVersion(String artifactVersion) {
+		Pattern versionPattern = Pattern.compile("^[0-9]*\\.[0-9]*\\.[0-9]*");
+    	Matcher matcher = versionPattern.matcher(artifactVersion);
+    	matcher.find();
+    	return matcher.group();
+	}
+	
 }
