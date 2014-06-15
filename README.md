@@ -1,4 +1,4 @@
 nodejs-installer-plugin
 =======================
 
-Node.js and Npm installer plugin for Maven running on Linux
+Node.js and npm installer plugin for Maven running on Linux or MacOS
