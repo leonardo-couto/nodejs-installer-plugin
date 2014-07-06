@@ -58,7 +58,7 @@ Node.js binary is cached in your maven local repository and if the specified ver
 This plugin only install Node and npm global dependencies. For everything else use something else like *exec-maven-plugin* or *maven-antrun-plugin*. See example below for automatically running ```npm install``` and ```grunt``` using Exec Maven Plugin.
 
 
-```
+```xml
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
