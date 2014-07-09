@@ -4,6 +4,10 @@ nodejs-installer-plugin
 A Node.js and npm installer plugin for Maven.
 Currently supports only Linux and MacOS.
 
+**Example application**
+
+https://github.com/leonardo-couto/example-nodejs-plugin
+
 **Usage**
 
 Add the following plugin to your pom.xml
