@@ -18,7 +18,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <node.version>0.10.28</node.version>
+    <node.version>0.12.5</node.version>
     
     <!-- Default OS and arch -->
     <node.os>linux</node.os>
@@ -82,7 +82,7 @@
     <dependency>
       <groupId>com.github.leonardo-couto</groupId>
       <artifactId>nodejs-binaries</artifactId>
-      <version>${node.version}.1</version>
+      <version>${node.version}</version>
       <classifier>${node.os}-${node.arch}</classifier>
       <type>tar.gz</type>
     </dependency>
