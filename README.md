@@ -28,7 +28,7 @@ Add the following plugin to your pom.xml
       <plugin>
         <groupId>com.github.leonardo-couto</groupId>
         <artifactId>nodejs-installer-plugin</artifactId>
-        <version>0.10.28</version>
+        <version>0.12.5</version>
         <executions>
           <execution>
             <phase>validate</phase>
