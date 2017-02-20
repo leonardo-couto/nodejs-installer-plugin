@@ -22,7 +22,7 @@
     
     <!-- Default OS and arch -->
     <node.os>linux</node.os>
-    <node.arch>x86</node.arch>
+    <node.arch>x64</node.arch>
   </properties>
 
   <licenses>
@@ -147,39 +147,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>x64</id>
-      <activation>
-        <os>
-          <arch>x64</arch>
-        </os>
-      </activation>
-      <properties>
-        <node.arch>x64</node.arch>
-      </properties>
-    </profile>
-    <profile>
-      <id>x86_64</id>
-      <activation>
-        <os>
-          <arch>x86_64</arch>
-        </os>
-      </activation>
-      <properties>
-        <node.arch>x64</node.arch>
-      </properties>
-    </profile>
-    <profile>
-      <id>amd64</id>
-      <activation>
-        <os>
-          <arch>amd64</arch>
-        </os>
-      </activation>
-      <properties>
-        <node.arch>x64</node.arch>
-      </properties>
-    </profile>
     <profile>
       <id>mac</id>
       <activation>
