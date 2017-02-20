@@ -5,13 +5,6 @@
   <artifactId>nodejs-installer-plugin</artifactId>
   <version>7.5.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
-
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>9</version>
-  </parent>
-
   <name>nodejs-installer-plugin Maven Plugin</name>
   <description>Maven plugin to install Node.js and npm</description>
   <url>http://github.com/leonardo-couto/nodejs-installer-plugin</url>
@@ -24,6 +17,17 @@
     <node.os>linux</node.os>
     <node.arch>x64</node.arch>
   </properties>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh-snapshot</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 
   <licenses>
     <license>
@@ -141,6 +145,14 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <releaseProfiles>deploy</releaseProfiles>
+        </configuration>
       </plugin>
 
     </plugins>
