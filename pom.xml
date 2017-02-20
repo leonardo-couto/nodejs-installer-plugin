@@ -3,7 +3,7 @@
 
   <groupId>com.github.leonardo-couto</groupId>
   <artifactId>nodejs-installer-plugin</artifactId>
-  <version>7.5.0</version>
+  <version>7.5.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>nodejs-installer-plugin Maven Plugin</name>
   <description>Maven plugin to install Node.js and npm</description>
@@ -41,7 +41,7 @@
     <connection>scm:git:ssh://git@github.com/leonardo-couto/nodejs-installer-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/leonardo-couto/nodejs-installer-plugin.git</developerConnection>
     <url>https://github.com/leonardo-couto/nodejs-installer-plugin</url>
-    <tag>nodejs-installer-plugin-7.5.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <developers>
